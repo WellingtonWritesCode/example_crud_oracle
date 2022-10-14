@@ -21,9 +21,7 @@ class OracleQueries:
         self.port = 1521
         self.service_name = 'XEPDB1'
         self.sid = 'XE'
-
-        with open("conexion/passphrase/authentication.oracle", "r") as f:
-            self.user, self.passwd = f.read().split(',')            
+        self.cur = False        
 
     def __del__(self):
         if self.cur:
@@ -62,10 +60,7 @@ class OracleQueries:
         return: um cursor que permite utilizar as funções da biblioteca cx_Oracle
         '''
 
-        self.conn = cx_Oracle.connect(user=self.user,
-                                      password=self.passwd,
-                                      dsn=self.connectionString()
-                                     )
+        self.conn = cx_Oracle.connect("labdatabase/labDatabase2022@localhost:1521/XEPDB1")
         self.cur = self.conn.cursor()
         return self.cur
 
