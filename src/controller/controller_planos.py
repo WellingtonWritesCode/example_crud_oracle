@@ -13,18 +13,17 @@ class Controller_Planos:
         oracle.connect()
 
         # Solicita ao usuario o novo id do plano
-        id_plano = input("Plano (Novo): ")
+        id_plano = input("Plano ID (Novo): ")
 
         if self.verifica_existencia_socio(oracle, id_plano):
 
             # Solicita novo plano
-            nome_plano = input("Nome plano (Novo): ")
-            valor_plano = input("Valor plano (Novo): ")
-
+            nome = input("Nome plano (Novo): ")
+            valor = input("Valor plano (Novo): ")
 
             # Insere e persiste o novo plano
             oracle.write(
-                f"insert into planos values ('{nome_plano}', '{valor_plano}')")
+                f"insert into planos values ('{nome}', '{valor}')")
 
 
             # Recupera os dados do novo cliente criado transformando em um DataFrame
@@ -33,7 +32,7 @@ class Controller_Planos:
             # Cria um novo objeto Cliente
             novo_plano = Planos(
                 df_plano.nome.values[0],
-                df_plano.valor.values[0],
+                df_plano.valor.values[0]
             )
             # Exibe os atributos do novo cliente
             print(novo_plano.to_string())
@@ -42,14 +41,14 @@ class Controller_Planos:
         else:
             print(f"O Plano de ID {id_plano} já está cadastrado.")
             return None
-            
+
     def atualizar_plano(self) -> Planos:
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
 
         # Solicita ao usuário o código do cliente a ser alterado
-        id_plano = int(input("ID so plano que deseja alter o nome: "))
+        id_plano = int(input("ID do plano que deseja alter: "))
 
         # Verifica se o cliente existe na base de dados
         if not self.verifica_existencia_plano(oracle, id_plano):
@@ -65,8 +64,8 @@ class Controller_Planos:
             # Cria um novo objeto cliente
             plano_atualizado = Planos(
                 df_plano.id_plano.values[0],
-                df_plano.id_plano.values[0],
-
+                df_plano.id_nome.values[0]
+            )
             # Exibe os atributos do novo cliente
             print(plano_atualizado.to_string())
             # Retorna o objeto plano_atualizado para utilização posterior, caso necessário
@@ -93,7 +92,8 @@ class Controller_Planos:
             # Cria um novo objeto Cliente para informar que foi removido
             plano_excluido = Planos(
                 df_plano.id_plano.values[0],
-                df_socio.nome.values[0]
+                df_plano.nome.values[0]
+            )
             # Exibe os atributos do plano excluído
             print("Plano Removido com Sucesso!")
             print(plano_excluido.to_string())
