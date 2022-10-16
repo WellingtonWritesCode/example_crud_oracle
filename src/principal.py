@@ -28,9 +28,9 @@ def run():
     ]
     tab_group = [
         [sg.Tab("Relatorios", layout_relatorios)],
-        [sg.Tab("Inserir Novos Registros", layout_inserir)],
-        [sg.Tab("Atualizar Registros", layout_atualizar)],
-        [sg.Tab("Excluir Registros", layout_excluir)]
+        [sg.Tab("Inserir", layout_inserir)],
+        [sg.Tab("Atualizar", layout_atualizar)],
+        [sg.Tab("Excluir", layout_excluir)]
     ]
     layout = [
         [sg.TabGroup(tab_group, tab_background_color="#64778d", expand_y=True)],
@@ -45,19 +45,20 @@ def run():
         elif event == '-I_S-':
             pass
         elif event == '-I_P-':
-            ctrl_planos.inserir_plano
+            print("test")
+            ctrl_planos.inserir_plano()
         elif event == '-I_M-':
             pass
         elif event == '-A_S-':
             pass
         elif event == '-A_P-':
-            ctrl_planos.atualizar_plano
+            ctrl_planos.atualizar_plano()
         elif event == '-A_M-':
             pass
         elif event == '-E_S-':
             pass
         elif event == '-E_P-':
-            ctrl_planos.excluir_plano
+            ctrl_planos.excluir_plano()
         elif event == '-E_M-':
             pass
     window.close()

@@ -47,9 +47,10 @@ class Controller_Planos:
 
         # Recupera os dados do novo cliente criado transformando em um DataFrame
         df_plano = oracle.sqlToDataFrame(
-            f"select nome, valor from planos where id_plano = '{id_plano}'")
+            f"select id_plano, nome, valor from planos where id_plano = '{id_plano}'")
         # Cria um novo objeto Cliente
         novo_plano = Planos(
+            df_plano.id_plano.values[0],
             df_plano.nome.values[0],
             df_plano.valor.values[0]
         )
@@ -70,9 +71,10 @@ class Controller_Planos:
         if not self.verifica_existencia_plano(oracle, id_plano):
             # Solicita a nova descrição do cliente
             df_plano = oracle.sqlToDataFrame(
-                f"select nome, valor from planos where id_plano = {id_plano}")
+                f"select id_plano, nome, valor from planos where id_plano = {id_plano}")
             
             plano = Planos(
+                df_plano.id_plano.values[0],
                 df_plano.nome.values[0],
                 df_plano.valor.values[0]
             )
@@ -118,9 +120,10 @@ class Controller_Planos:
             # Recupera os dados do novo plano criado transformando em um DataFrame
 
             df_plano = oracle.sqlToDataFrame(
-                f"select nome, valor from planos where id_plano = {id_plano}")
+                f"select id_plano, nome, valor from planos where id_plano = {id_plano}")
             # Cria um novo objeto cliente
             plano_atualizado = Planos(
+                df_plano.id_plano.values[0],
                 df_plano.nome.values[0],
                 df_plano.valor.values[0]
             )
@@ -144,21 +147,22 @@ class Controller_Planos:
         if not self.verifica_existencia_plano(oracle, id_plano):
             # Recupera os dados do plano e transforma em um DataFrame
             df_plano = oracle.sqlToDataFrame(
-                f"select id_plano, nome from planos where id_plano = {id_plano}")
+                f"select id_plano, nome, valor from planos where id_plano = {id_plano}")
             # Revome o plano da tabela
             oracle.write(f"delete from planos where id_plano = {id_plano}")
             # Cria um novo objeto Cliente para informar que foi removido
             plano_excluido = Planos(
                 df_plano.id_plano.values[0],
-                df_plano.nome.values[0]
+                df_plano.nome.values[0],
+                df_plano.valor.values[0]
             )
             # Exibe os atributos do plano excluído
             sg.PopupOK("Plano excluido com sucesso!", "Plano excluido:", plano_excluido.to_string())
         else:
-            print(f"O plano de ID {id_plano} não existe.")
+            sg.PopupOK(f"O plano de ID {id_plano} não existe.")
 
     def verifica_existencia_plano(self, oracle: OracleQueries, id_plano:int = None) -> bool:
         # Recupera os dados do novo cliente criado transformando em um DataFrame
         df_plano = oracle.sqlToDataFrame(
-            f"select id_plano, nome from planos where id_plano = {id_plano}")
+            f"select id_plano, nome, valor from planos where id_plano = {id_plano}")
         return df_plano.empty

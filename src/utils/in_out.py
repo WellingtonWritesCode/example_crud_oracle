@@ -14,7 +14,9 @@ def le_int(texto:str="Insira um numero:") -> int:
             return 0
         elif event == '-OK-':
             try:
-                return int(values['-IN-'])
+                out = int(values['-IN-'])
+                window.close()
+                return out
             except ValueError:
                 sg.PopupOK("Numero invalido!")
 
