@@ -60,4 +60,4 @@ class SplashScreen:
                 [sg.T("Professor: Prof. M.Sc. Howard Roatti")],
                 [sg.Col([[sg.B("Ok")]], element_justification='center', pad=(0,0), expand_x=True)]]
 
-        event, values = sg.Window("", layout, finalize=True, close=True)
+        event, values = sg.Window("", layout, finalize=True).read(close=True)
