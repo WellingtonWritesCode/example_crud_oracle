@@ -1,7 +1,8 @@
 from model.socios import Socios
 from conexion.oracle_queries import OracleQueries
 import PySimpleGUI as sg
-
+import re
+from utils.in_out import le_cpf, le_int
 
 class Controller_Socio:
     def __init__(self):
@@ -14,10 +15,11 @@ class Controller_Socio:
         oracle.connect()
 
         # Solicita ao usuario o novo CPF
-        cpf = input("CPF (Novo): ")
+        cpf = le_cpf("CPF:")
 
         if self.verifica_existencia_socio(oracle, cpf):
             # Solicita ao sócio o novo nome
+            id_plano = le_int()
             nome = input("Nome (Novo): ")
             endereco = input("Enderecço (Novo): ")
             data_associacao = input("Data de associação (Novo): ")
@@ -26,7 +28,7 @@ class Controller_Socio:
             email = input("Email (Novo): ")
             # Insere e persiste o novo cliente
             oracle.write(
-                f"insert into socios values ('{cpf}', '{nome}', '{endereco}', '{data_associacao}', '{data_desativacao}', '{telefone}', '{email}')")
+                f"insert into socios values ('{cpf}', {id_plano}, '{nome}', '{endereco}', '{data_associacao}', '{data_desativacao}', '{telefone}', '{email}')")
             # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_socio = oracle.sqlToDataFrame(
                 f"select cpf, nome from socios where cpf = '{cpf}'")
