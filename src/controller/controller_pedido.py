@@ -1,7 +1,6 @@
 from pydoc import cli
 from model.pedidos import Pedido
 from model.clientes import Cliente
-from controller.controller_cliente import Controller_Cliente
 from model.fornecedores import Fornecedor
 from controller.controller_fornecedor import Controller_Fornecedor
 from conexion.oracle_queries import OracleQueries
