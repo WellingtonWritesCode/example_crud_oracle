@@ -81,7 +81,6 @@ def excluir(opcao_excluir:int=0):
 
 def run():
     print(tela_inicial.get_updated_screen())
-    config.clear_console()
 
     while True:
         print(config.MENU_PRINCIPAL)
