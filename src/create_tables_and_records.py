@@ -21,7 +21,7 @@ def generate_records(query:str, sep:str=';'):
     oracle = OracleQueries(can_write=True)
     oracle.connect()
 
-    for command in list_of_commands:    
+    for command in list_of_commands:
         if len(command) > 0:
             print(command)
             oracle.write(command)

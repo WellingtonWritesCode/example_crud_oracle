@@ -39,9 +39,9 @@ class SplashScreen:
                     [sg.T("2- Planos:")],
                     [sg.T("3- Mensalidades:")]]
 
-        layout_r = [[sg.T("0", key='-SOCIOS-')],
-                    [sg.T("0", key='-PLANOS-')],
-                    [sg.T("0", key='-MENSALIDADES-')]]
+        layout_r = [[sg.T(self.get_total_socios(), key='-SOCIOS-')],
+                    [sg.T(self.get_total_planos(), key='-PLANOS-')],
+                    [sg.T(self.get_total_mensalidades(), key='-MENSALIDADES-')]]
 
         nomes = [[sg.T("Cleverton dos Santos Liltk")],
                 [sg.T("Gustavo de Oliveira Christ")],
