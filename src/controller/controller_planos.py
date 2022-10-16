@@ -1,6 +1,7 @@
 from model.planos import Planos
 from conexion.oracle_queries import OracleQueries
-
+from utils.in_out import le_int
+import PySimpleGUI as sg
 
 class Controller_Planos:
     def __init__(self):
@@ -13,34 +14,49 @@ class Controller_Planos:
         oracle.connect()
 
         # Solicita ao usuario o novo id do plano
-        id_plano = input("Plano ID (Novo): ")
+        id_plano = oracle.sqlToDataFrame("select PLANOS_ID_PLANO_SEQ.NEXTVAL id from sys.dual").id.values[0]
 
-        if self.verifica_existencia_socio(oracle, id_plano):
+        # Solicita novo plano
+        window = sg.Window("Novo Plano",
+                            [
+                                [sg.T("Nome: "), sg.Input(s=(20, 1), key='-NOME-')],
+                                [sg.T("Valor: "), sg.Input(s=(20, 1), key='-VALOR-')],
+                                [sg.Col([[sg.B("OK", key='-OK-')]], element_justification="right", expand_x=True)]
+                            ])
+        
+        valido = False
 
-            # Solicita novo plano
-            nome = input("Nome plano (Novo): ")
-            valor = input("Valor plano (Novo): ")
+        while not valido:
 
-            # Insere e persiste o novo plano
-            oracle.write(
-                f"insert into planos values ('{nome}', '{valor}')")
+            event, values = window.read()
+            
+            if event == '-OK-':
+                try:
+                    nome = values['-NOME-']
+                    valor = values['-VALOR-']
+                    valido = True
+                except ValueError:
+                    sg.PopupOK("Valor invalido!")
+
+        window.close()
+
+        # Insere e persiste o novo plano
+        oracle.write(
+            f"insert into planos values ({id_plano}, '{nome}', '{valor}')")
 
 
-            # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_plano = oracle.sqlToDataFrame(
-                f"select nome, valor from planos where id_plano = '{id_plano}'")
-            # Cria um novo objeto Cliente
-            novo_plano = Planos(
-                df_plano.nome.values[0],
-                df_plano.valor.values[0]
-            )
-            # Exibe os atributos do novo cliente
-            print(novo_plano.to_string())
-            # Retorna o objeto novo_cliente para utilização posterior, caso necessário
-            return novo_plano
-        else:
-            print(f"O Plano de ID {id_plano} já está cadastrado.")
-            return None
+        # Recupera os dados do novo cliente criado transformando em um DataFrame
+        df_plano = oracle.sqlToDataFrame(
+            f"select nome, valor from planos where id_plano = '{id_plano}'")
+        # Cria um novo objeto Cliente
+        novo_plano = Planos(
+            df_plano.nome.values[0],
+            df_plano.valor.values[0]
+        )
+        # Exibe os atributos do novo cliente
+        sg.PopupOK("O seguinte plano foi criado:", novo_plano.to_string())
+        # Retorna o objeto novo_cliente para utilização posterior, caso necessário
+        return novo_plano
 
     def atualizar_plano(self) -> Planos:
         # Cria uma nova conexão com o banco que permite alteração
@@ -48,30 +64,72 @@ class Controller_Planos:
         oracle.connect()
 
         # Solicita ao usuário o código do cliente a ser alterado
-        id_plano = int(input("ID do plano que deseja alter: "))
+        id_plano = le_int("ID do plano que deseja alterar:")
 
         # Verifica se o cliente existe na base de dados
         if not self.verifica_existencia_plano(oracle, id_plano):
             # Solicita a nova descrição do cliente
-            novo_nome = input("Nome (Novo): ")
+            df_plano = oracle.sqlToDataFrame(
+                f"select nome, valor from planos where id_plano = {id_plano}")
+            
+            plano = Planos(
+                df_plano.nome.values[0],
+                df_plano.valor.values[0]
+            )
+
+            window = sg.Window("Alterar Plano",
+                            [
+                                [sg.T("Nome: "), sg.Input(s=(20, 1), key='-NOME-', disabled_readonly_background_color="#c0c0c0")],
+                                [sg.T("Valor:  "), sg.Input(s=(20, 1), key='-VALOR-', disabled_readonly_background_color="#c0c0c0")],
+                                [sg.T("Alterar: "), sg.Combo(["Ambos", "Nome", "Valor"], "Ambos", readonly=True, enable_events=True, k="-COMBO-"),
+                                 sg.Col([[sg.B("OK", key='-OK-')]], pad=(0, 0), element_justification="right", expand_x=True)]
+                            ])
+
+            while True:
+
+                event, values = window.read()
+
+                if event == sg.WINDOW_CLOSED:
+                    novo_nome = plano.nome_plano
+                    novo_valor = plano.valor_plano
+                    break
+                if event == '-COMBO-':
+                    window['-NOME-'].update(disabled=values['-COMBO-']=="Valor")
+                    window['-VALOR-'].update(disabled=values['-COMBO-']=="Nome")
+                if event == '-OK-':
+                    try:
+                        if values['-COMBO-'] == "Nome":
+                            novo_nome = values['-NOME-']
+                            novo_valor = plano.valor_plano
+                        elif values['-COMBO-'] == "Valor":
+                            novo_nome = plano.nome_plano
+                            novo_valor = values['-VALOR-']
+                        else:
+                            novo_nome = values['-NOME-']
+                            novo_valor = values['-VALOR-']
+                        window.close()
+                        break
+                    except ValueError:
+                        sg.PopupOK("Valor invalido!")
+
             # Atualiza o nome do plano existente
             oracle.write(
-                f"update planos set nome = '{novo_nome}' where id_plano = {id_plano}")
+                f"update planos set nome = '{novo_nome}', valor = {novo_valor} where id_plano = {id_plano}")
             # Recupera os dados do novo plano criado transformando em um DataFrame
 
             df_plano = oracle.sqlToDataFrame(
-                f"select id_plano, nome from planos where id_plano = {id_plano}")
+                f"select nome, valor from planos where id_plano = {id_plano}")
             # Cria um novo objeto cliente
             plano_atualizado = Planos(
-                df_plano.id_plano.values[0],
-                df_plano.id_nome.values[0]
+                df_plano.nome.values[0],
+                df_plano.valor.values[0]
             )
             # Exibe os atributos do novo cliente
-            print(plano_atualizado.to_string())
+            sg.PopupOK("Plano atualizado:", plano_atualizado.to_string())
             # Retorna o objeto plano_atualizado para utilização posterior, caso necessário
             return plano_atualizado
         else:
-            print(f"O ID {id_plano} não existe.")
+            sg.PopupOK(f"O plano de ID {id_plano} não existe.")
             return None
 
     def excluir_plano(self):
@@ -80,7 +138,7 @@ class Controller_Planos:
         oracle.connect()
 
         # Solicita ao usuário o ID do Plano a ser excluido
-        id_plano = int(input("ID do plano que irá ser excluido: "))
+        id_plano = id_plano = le_int("ID do plano que deseja excluir:")
 
         # Verifica se o cliente existe na base de dados
         if not self.verifica_existencia_plano(oracle, id_plano):
@@ -95,12 +153,11 @@ class Controller_Planos:
                 df_plano.nome.values[0]
             )
             # Exibe os atributos do plano excluído
-            print("Plano Removido com Sucesso!")
-            print(plano_excluido.to_string())
+            sg.PopupOK("Plano excluido com sucesso!", "Plano excluido:", plano_excluido.to_string())
         else:
             print(f"O plano de ID {id_plano} não existe.")
 
-    def verifica_existencia_plano(self, oracle: OracleQueries, id_plano: double = None) -> bool:
+    def verifica_existencia_plano(self, oracle: OracleQueries, id_plano:int = None) -> bool:
         # Recupera os dados do novo cliente criado transformando em um DataFrame
         df_plano = oracle.sqlToDataFrame(
             f"select id_plano, nome from planos where id_plano = {id_plano}")
