@@ -81,10 +81,10 @@ class Controller_Planos:
 
             window = sg.Window("Alterar Plano",
                             [
-                                [sg.T("Nome: "), sg.Input(s=(20, 1), key='-NOME-', disabled_readonly_background_color="#c0c0c0")],
-                                [sg.T("Valor:  "), sg.Input(s=(20, 1), key='-VALOR-', disabled_readonly_background_color="#c0c0c0")],
-                                [sg.T("Alterar: "), sg.Combo(["Ambos", "Nome", "Valor"], "Ambos", readonly=True, enable_events=True, k="-COMBO-"),
-                                 sg.Col([[sg.B("OK", key='-OK-')]], pad=(0, 0), element_justification="right", expand_x=True)]
+                                [sg.T("Deixe em branco para nao alterar")],
+                                [sg.T("Nome: "), sg.Input(s=(20, 1), key='-NOME-')],
+                                [sg.T("Valor:  "), sg.Input(s=(20, 1), key='-VALOR-')],
+                                [sg.Col([[sg.B("OK", key='-OK-')]], pad=(0, 0), element_justification="right", expand_x=True)]
                             ])
 
             while True:
@@ -95,20 +95,16 @@ class Controller_Planos:
                     novo_nome = plano.nome_plano
                     novo_valor = plano.valor_plano
                     break
-                if event == '-COMBO-':
-                    window['-NOME-'].update(disabled=values['-COMBO-']=="Valor")
-                    window['-VALOR-'].update(disabled=values['-COMBO-']=="Nome")
                 if event == '-OK-':
                     try:
-                        if values['-COMBO-'] == "Nome":
-                            novo_nome = values['-NOME-']
+                        if values['-VALOR-'] == "":
                             novo_valor = plano.valor_plano
-                        elif values['-COMBO-'] == "Valor":
-                            novo_nome = plano.nome_plano
+                        else:
                             novo_valor = values['-VALOR-']
+                        if values['-NOME-'] == "":
+                            novo_nome = plano.nome_plano
                         else:
                             novo_nome = values['-NOME-']
-                            novo_valor = values['-VALOR-']
                         window.close()
                         break
                     except ValueError:
