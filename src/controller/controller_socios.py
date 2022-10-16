@@ -1,5 +1,6 @@
 from model.socios import Socios
 from conexion.oracle_queries import OracleQueries
+import PySimpleGUI as sg
 
 
 class Controller_Socio:
