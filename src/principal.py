@@ -326,7 +326,7 @@ def relatorio_pagamentos_antes_vencimento():
     ]
 
     layout = [
-        [sg.Column(cols)],
+        [sg.Column(cols, scrollable=True, vertical_scroll_only=True, p=(0, 0), size_subsample_height=1.5)],
         [sg.B("    OK    ")]
     ]
 
