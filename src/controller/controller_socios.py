@@ -5,7 +5,7 @@ import re
 import datetime as dt
 from utils.in_out import le_cpf
 
-class Controller_Socio:
+class Controller_Socios:
     def __init__(self):
         pass
 
