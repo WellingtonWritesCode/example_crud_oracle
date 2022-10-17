@@ -21,7 +21,7 @@ class Controller_Socios:
         if self.verifica_existencia_socio(oracle, cpf):
             # Solicita ao sócio o novo nome
             aux = dt.date.today().strftime("%d/%m/%Y")
-            data_associacao = f"to_date({aux}, dd/mm/yyyy)"
+            data_associacao = f"to_date('{aux}', 'dd/mm/yyyy')"
 
             layout_l = [
                 [sg.T("Nome:")],
@@ -71,14 +71,14 @@ class Controller_Socios:
                         valid_int = False
                         error += "ID Invalido!\n"
                     if not valid_email or not valid_int:
-                        sg.PopupOK(error[:-2])
+                        sg.PopupOK(error[:-1])
                     else:
                         break
 
             window.close()
             # Insere e persiste o novo cliente
             oracle.write(
-                f"insert into socios values ('{cpf}', {id_plano}, '{nome}', '{endereco}', '{data_associacao}', NULL, '{telefone}', '{email}')")
+                f"insert into socios values ('{cpf}', {id_plano}, '{nome}', '{endereco}', {data_associacao}, NULL, '{telefone}', '{email}')")
             # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_socio = oracle.sqlToDataFrame(
                 f"select cpf, id_plano, endereco, nome, data_associacao, data_desativacao, telefone, email from socios where cpf = '{cpf}'")
@@ -173,5 +173,5 @@ class Controller_Socios:
     def verifica_existencia_socio(self, oracle: OracleQueries, cpf: str = None) -> bool:
         # Recupera os dados do novo cliente criado transformando em um DataFrame
         df_socio = oracle.sqlToDataFrame(
-            f"select cpf, nome from socios where cpf = {cpf}")
+            f"select cpf, nome from socios where cpf = '{cpf}'")
         return df_socio.empty
