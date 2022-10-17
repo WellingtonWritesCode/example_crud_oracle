@@ -70,5 +70,5 @@ class Socios:
     def to_string(self) -> str:
         return (f"CPF: {self.get_CPF()} | {self.get_id_plano()}\n"+
                 f"{self.get_endereco()}\n"+
-                f"{self.get_nome()} | {self.get_data_associacao} | {self.get_data_desativacao()}\n"+
+                f"{self.get_nome()} | {self.get_data_associacao()} | {self.get_data_desativacao()}\n"+
                 f"{self.get_telefone()} | {self.get_email()}")
