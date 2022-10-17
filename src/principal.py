@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import pandas as pd
 from utils.splash_screen import SplashScreen
 from reports.relatorios import Relatorio
 from controller.controller_socios import Controller_Socios
@@ -22,6 +23,17 @@ def relatorio_socios() -> None:
 
     nome = [
         [sg.T("Nome")],
+        [sg.T(aux)]
+    ]
+
+    aux = ""
+    for i, n in enumerate(df_socios.cpf.values):
+        aux += n
+        if i < tam:
+            aux += "\n"
+
+    cpf = [
+        [sg.T("CPF")],
         [sg.T(aux)]
     ]
 
@@ -82,7 +94,7 @@ def relatorio_socios() -> None:
 
     aux = ""
     for i, n in enumerate(df_socios.data_desativacao.values):
-        if n != None:
+        if not pd.isnull(n):
             aux += str(n)[:10]
         else:
             aux += "N/A"
@@ -97,6 +109,7 @@ def relatorio_socios() -> None:
     cols = [
         [
             sg.Col(nome, p=(0, 0)),
+            sg.Col(cpf, p=(0, 0)),
             sg.Col(plano_assinado, p=(0, 0)),
             sg.Col(email, p=(0, 0)),
             sg.Col(telefone, p=(0, 0)),
@@ -195,7 +208,7 @@ def relatorio_mensalidades():
 
     aux = ""
     for i, n in enumerate(df_mensalidades.data_pagamento.values):
-        if n != None:
+        if not pd.isnull(n):
             aux += str(n)[:10]
         else:
             aux += "N/A"
@@ -220,7 +233,7 @@ def relatorio_mensalidades():
 
     aux = ""
     for i, n in enumerate(df_mensalidades.multa.values):
-        if n != None:
+        if not pd.isnull(n):
             aux += str(n)
         else:
             aux += "N/A"
@@ -392,13 +405,13 @@ def run():
         elif event == '-I_M-':
             pass
         elif event == '-A_S-':
-            pass
+            ctrl_socios.atualizar_socio()
         elif event == '-A_P-':
             ctrl_planos.atualizar_plano()
         elif event == '-A_M-':
             pass
         elif event == '-E_S-':
-            pass
+            ctrl_socios.excluir_socio()
         elif event == '-E_P-':
             ctrl_planos.excluir_plano()
         elif event == '-E_M-':
