@@ -26,22 +26,13 @@ class SplashScreen:
         # Retorna o total de registros computado pela query
         return oracle.sqlToDataFrame(self.qry_total_planos)["total_planos"].values[0]
 
-    def get_total_mensalidades(self):
-        # Cria uma nova conexão com o banco que permite alteração
-        oracle = OracleQueries()
-        oracle.connect()
-        # Retorna o total de registros computado pela query
-        return oracle.sqlToDataFrame(self.qry_total_mensalidades)["total_mensalidades"].values[0]
-
     def get_updated_screen(self):
 
         layout_l = [[sg.T("1- Socios:")],
-                    [sg.T("2- Planos:")],
-                    [sg.T("3- Mensalidades:")]]
+                    [sg.T("2- Planos:")]]
 
         layout_r = [[sg.T(self.get_total_socios(), key='-SOCIOS-')],
-                    [sg.T(self.get_total_planos(), key='-PLANOS-')],
-                    [sg.T(self.get_total_mensalidades(), key='-MENSALIDADES-')]]
+                    [sg.T(self.get_total_planos(), key='-PLANOS-')]]
 
         nomes = [[sg.T("Cleverton dos Santos Liltk")],
                 [sg.T("Gustavo de Oliveira Christ")],
