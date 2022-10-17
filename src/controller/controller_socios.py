@@ -4,6 +4,7 @@ import PySimpleGUI as sg
 import re
 import datetime as dt
 from utils.in_out import le_cpf
+from utils.general_utils import capitalize_name
 
 class Controller_Socios:
     def __init__(self):
@@ -249,32 +250,31 @@ class Controller_Socios:
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
+        
+        # Recupera os dados do novo cliente criado transformando em um DataFrame
+        df_socio = oracle.sqlToDataFrame(
+            f"select cpf, nome from socios")
+        
+        socios = [f"{capitalize_name(nome)}|{df_socio.cpf.values[i]}" for i, nome in enumerate(df_socio.nome.values)]
 
-        # Solicita ao usuário o CPF do Cliente a ser alterado
-        cpf = le_cpf("CPF do socio que deseja remover:")
+        layout = [[sg.Combo(socios, k='-SOCIOS-', default_value=socios[0], readonly=True), sg.B("Excluir", k='-EXCLUIR-'), sg.B("Cancelar", k='-CANCELAR-')]]
+        window = sg.Window("Excluir", layout)
 
-        # Verifica se o cliente existe na base de dados
-        if not self.verifica_existencia_socio(oracle, cpf):
-            # Recupera os dados do novo cliente criado transformando em um DataFrame
-            df_socio = oracle.sqlToDataFrame(
-                f"select cpf, id_plano, endereco, nome, data_associacao, data_desativacao, telefone, email from socios where cpf = '{cpf}'")
-            # Revome o cliente da tabela
-            oracle.write(f"delete from socios where cpf = '{cpf}'")
-            # Cria um novo objeto Cliente para informar que foi removido
-            socio_excluido = Socios(
-                df_socio.cpf.values[0],
-                df_socio.id_plano.values[0],
-                df_socio.endereco.values[0],
-                df_socio.nome.values[0],
-                df_socio.data_associacao.values[0],
-                df_socio.data_desativacao.values[0],
-                df_socio.telefone.values[0],
-                df_socio.email.values[0]
-            )
-            # Exibe os atributos do cliente excluído
-            sg.PopupOK("Socio Removido com Sucesso!", socio_excluido.to_string())
-        else:
-            sg.PopupOK(f"O CPF {cpf} não existe.")
+        while True:
+            event, values = window.read()
+            if event in (sg.WINDOW_CLOSED, '-CANCELAR-'):
+                break
+            elif event == '-EXCLUIR-':
+                print(values['-SOCIOS-'])
+                delete_cpf = values['-SOCIOS-'].split("|")[1]
+                oracle.write(f"delete from mensalidades where cpf = '{delete_cpf}'")
+                oracle.write(f"delete from socios where cpf = '{delete_cpf}'")
+                df_socio = oracle.sqlToDataFrame(
+                     f"select cpf, nome from socios")
+                socios = [f"{capitalize_name(nome)}|{df_socio.cpf.values[i]}" for i, nome in enumerate(df_socio.nome.values)]
+                window['-SOCIOS-'].update(values=socios, default_value=socios[0])
+
+        window.close()
 
     def verifica_existencia_socio(self, oracle: OracleQueries, cpf: str = None) -> bool:
         # Recupera os dados do novo cliente criado transformando em um DataFrame
