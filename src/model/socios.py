@@ -32,10 +32,10 @@ class Socios:
         self.nome = nome
 
     def set_data_associacao(self, data_assosiacao: str):
-        self.data_associacao = data_assosiacao
+        self.data_associacao = str(data_assosiacao)[:10]
 
     def set_data_desativacao(self, data_desativacao: str):
-        self.data_desativacao = data_desativacao
+        self.data_desativacao = str(data_desativacao)[:10]
 
     def set_telefone(self, telefone: str):
         self.telefone = telefone

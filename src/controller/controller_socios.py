@@ -174,7 +174,7 @@ class Controller_Socios:
                         novo_telefone = df_socio.telefone.values[0]
 
                     if values['-EMAIL-'] != "":
-                        if not re.match("[a-zA-Z0-9]+@[[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
+                        if not re.match("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
                             valid_email = False
                             error += "Email Invalido!\n"
                         else:
