@@ -32,8 +32,13 @@ def le_cpf(texto: str = ""):
         if event in (sg.WINDOW_CLOSED, '-CANCEL-'):
             return None
         elif event == '-OK-':
-            if re.match("[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}", values['-IN-']):
-                return values['-IN-']
+            cpf = values['-IN-']
+            if re.match("[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}", cpf):
+                window.close()
+                return cpf
+            elif re.match("[0-9]{11}", cpf):
+                window.close()
+                return f"{cpf[0:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
             else:
                 sg.PopupOK("CPF invalido!")
 
