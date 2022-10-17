@@ -252,13 +252,12 @@ class Controller_Socios:
         oracle.connect()
         
         # Recupera os dados do novo cliente criado transformando em um DataFrame
-        df_socio = oracle.sqlToDataFrame(
-            f"select cpf, nome from socios")
+        df_socio = oracle.sqlToDataFrame("select cpf, nome from socios")
         
         socios = [f"{capitalize_name(nome)}|{df_socio.cpf.values[i]}" for i, nome in enumerate(df_socio.nome.values)]
 
         layout = [[sg.Combo(socios, k='-SOCIOS-', default_value=socios[0], readonly=True), sg.B("Excluir", k='-EXCLUIR-'), sg.B("Cancelar", k='-CANCELAR-')]]
-        window = sg.Window("Excluir", layout)
+        window = sg.Window("Excluir Socio", layout)
 
         while True:
             event, values = window.read()
