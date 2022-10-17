@@ -11,7 +11,13 @@ class Socios:
                  ):
 
         self.set_CPF(CPF)
+        self.set_id_plano(id_plano)
+        self.set_endereco(endereco)
         self.set_nome(nome)
+        self.set_data_associacao(data_associacao)
+        self.set_data_desativacao(data_desativacao)
+        self.set_telefone(telefone)
+        self.set_email(email)
 
     def set_CPF(self, CPF: str):
         self.CPF = CPF
