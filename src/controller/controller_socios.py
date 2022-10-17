@@ -267,7 +267,6 @@ class Controller_Socios:
             elif event == '-EXCLUIR-':
                 print(values['-SOCIOS-'])
                 delete_cpf = values['-SOCIOS-'].split("|")[1]
-                oracle.write(f"delete from mensalidades where cpf = '{delete_cpf}'")
                 oracle.write(f"delete from socios where cpf = '{delete_cpf}'")
                 df_socio = oracle.sqlToDataFrame(
                      f"select cpf, nome from socios")
