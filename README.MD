@@ -10,6 +10,10 @@ O projeto desenvovlido, consiste em um sistema de controle de sócios torcedores
 - [Lucio Ewald do Nascimento](github.com/lucioew28),
 - [Wellington da Silva Barbosa Junior](github.com/WellingtonWritesCode)
 
+## 🎬 Vídeo do projeto:
+
+- [Link para acesso:]();
+
 ## ⚡ Executando o projeto:
 
 O sistema exige que as tabelas existam, então basta executar o script Python a seguir para criação das tabelas e preenchimento de dados de exemplos:

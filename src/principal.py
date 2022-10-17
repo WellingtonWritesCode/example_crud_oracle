@@ -7,12 +7,12 @@ from controller.controller_planos import Controller_Planos
 
 tela_inicial = SplashScreen()
 relatorios = Relatorio()
-ctrl_socios = Controller_Socios() 
+ctrl_socios = Controller_Socios()
 ctrl_planos = Controller_Planos()
 
 def relatorio_socios() -> None:
     df_socios = relatorios.get_relatorio_socios()
-    
+
     aux = ""
     tam = len(df_socios.nome.values)-1
 
@@ -382,7 +382,7 @@ def run():
         [sg.TabGroup(tab_group, tab_background_color="#64778d", expand_y=True)],
         [sg.Col([[sg.B("    Sair    ", k='-SAIR-')]], element_justification="right", expand_x=True, pad=(0,0))]
     ]
-    window = sg.Window("SCSTSCB", layout)
+    window = sg.Window("Sócios Torcedores - SC/BR, layout)
 
     while True:
         event, values = window.read()
