@@ -1,8 +1,10 @@
 import PySimpleGUI as sg
 from utils.splash_screen import SplashScreen
+from controller.controller_socios import Controller_Socios
 from controller.controller_planos import Controller_Planos
 
 tela_inicial = SplashScreen()
+ctrl_socios = Controller_Socios() 
 ctrl_planos = Controller_Planos()
 
 def run():
@@ -43,7 +45,7 @@ def run():
         if event in ("-SAIR-", sg.WINDOW_CLOSED):
             break
         elif event == '-I_S-':
-            pass
+            ctrl_socios.inserir_socio()
         elif event == '-I_P-':
             print("test")
             ctrl_planos.inserir_plano()
