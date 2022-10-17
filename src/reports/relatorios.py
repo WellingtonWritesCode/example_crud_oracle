@@ -1,75 +1,49 @@
+from pandas import DataFrame
 from conexion.oracle_queries import OracleQueries
 
 class Relatorio:
     def __init__(self):
-        # Abre o arquivo com a consulta e associa a um atributo da classe
-        with open("sql/relatorio_pedidos.sql") as f:
-            self.query_relatorio_pedidos = f.read()
+        with open("src/sql/relatorio_socios.sql") as f:
+            self.query_relatorio_socios = f.read()
 
-        # Abre o arquivo com a consulta e associa a um atributo da classe
-        with open("sql/relatorio_pedidos_por_fornecedor.sql") as f:
-            self.query_relatorio_pedidos_por_fornecedor = f.read()
+        with open("src/sql/relatorio_planos.sql") as f:
+            self.query_relatorio_planos = f.read()
 
-        # Abre o arquivo com a consulta e associa a um atributo da classe
-        with open("sql/relatorio_produtos.sql") as f:
-            self.query_relatorio_produtos = f.read()
+        with open("src/sql/relatorio_mensalidades.sql") as f:
+            self.query_relatorio_mensalidades = f.read()
 
-        # Abre o arquivo com a consulta e associa a um atributo da classe
-        with open("sql/relatorio_clientes.sql") as f:
-            self.query_relatorio_clientes = f.read()
+        with open("src/sql/relatorio_socios_por_plano.sql") as f:
+            self.query_relatorio_socios_por_plano = f.read()
 
-        # Abre o arquivo com a consulta e associa a um atributo da classe
-        with open("sql/relatorio_fornecedores.sql") as f:
-            self.query_relatorio_fornecedores = f.read()
+        with open("src/sql/relatorio_pagamentos_antes_vencimento.sql") as f:
+            self.query_relatorio_pagamento_antes_vencimento = f.read()
 
-        # Abre o arquivo com a consulta e associa a um atributo da classe
-        with open("sql/relatorio_itens_pedidos.sql") as f:
-            self.query_relatorio_itens_pedidos = f.read()
-
-    def get_relatorio_pedidos(self):
-        # Cria uma nova conexão com o banco que permite alteração
+    def get_relatorio_socios(self) -> DataFrame:
         oracle = OracleQueries()
         oracle.connect()
-        # Recupera os dados transformando em um DataFrame
-        print(oracle.sqlToDataFrame(self.query_relatorio_pedidos))
-        input("Pressione Enter para Sair do Relatório de Pedidos")
 
-    def get_relatorio_pedidos_por_fornecedor(self):
-        # Cria uma nova conexão com o banco que permite alteração
+        return oracle.sqlToDataFrame(self.query_relatorio_socios)
+
+    def get_relatorio_planos(self) -> DataFrame:
         oracle = OracleQueries()
         oracle.connect()
-        # Recupera os dados transformando em um DataFrame
-        print(oracle.sqlToDataFrame(self.query_relatorio_pedidos_por_fornecedor))
-        input("Pressione Enter para Sair do Relatório de Fornecedores")
 
-    def get_relatorio_produtos(self):
-        # Cria uma nova conexão com o banco que permite alteração
+        return oracle.sqlToDataFrame(self.query_relatorio_planos)
+
+    def get_relatorio_mensalidades(self) -> DataFrame:
         oracle = OracleQueries()
         oracle.connect()
-        # Recupera os dados transformando em um DataFrame
-        print(oracle.sqlToDataFrame(self.query_relatorio_produtos))
-        input("Pressione Enter para Sair do Relatório de Produtos")
 
-    def get_relatorio_clientes(self):
-        # Cria uma nova conexão com o banco que permite alteração
+        return oracle.sqlToDataFrame(self.query_relatorio_mensalidades)
+
+    def get_relatorio_socios_por_plano(self) -> DataFrame:
         oracle = OracleQueries()
         oracle.connect()
-        # Recupera os dados transformando em um DataFrame
-        print(oracle.sqlToDataFrame(self.query_relatorio_clientes))
-        input("Pressione Enter para Sair do Relatório de Clientes")
 
-    def get_relatorio_fornecedores(self):
-        # Cria uma nova conexão com o banco que permite alteração
+        return oracle.sqlToDataFrame(self.query_relatorio_socios_por_plano)
+
+    def get_relatorio_pagamentos_antes_vencimento(self) -> DataFrame:
         oracle = OracleQueries()
         oracle.connect()
-        # Recupera os dados transformando em um DataFrame
-        print(oracle.sqlToDataFrame(self.query_relatorio_fornecedores))
-        input("Pressione Enter para Sair do Relatório de Fornecedores")
 
-    def get_relatorio_itens_pedidos(self):
-        # Cria uma nova conexão com o banco que permite alteração
-        oracle = OracleQueries()
-        oracle.connect()
-        # Recupera os dados transformando em um DataFrame
-        print(oracle.sqlToDataFrame(self.query_relatorio_itens_pedidos))
-        input("Pressione Enter para Sair do Relatório de Itens de Pedidos")
+        return oracle.sqlToDataFrame(self.query_relatorio_pagamento_antes_vencimento)
