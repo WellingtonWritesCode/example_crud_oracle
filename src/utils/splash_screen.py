@@ -6,24 +6,18 @@ QUERY_COUNT = 'select count(1) as total_{tabela} from {tabela}'
 class SplashScreen:
 
     def __init__(self):
-        # Consultas de contagem de registros - inicio
         self.qry_total_socios = QUERY_COUNT.format(tabela="socios")
         self.qry_total_planos = QUERY_COUNT.format(tabela="planos")
         self.qry_total_mensalidades = QUERY_COUNT.format(tabela="mensalidades")
-        # Consultas de contagem de registros - fim
 
     def get_total_socios(self):
-        # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries()
         oracle.connect()
-        # Retorna o total de registros computado pela query
         return oracle.sqlToDataFrame(self.qry_total_socios)["total_socios"].values[0]
 
     def get_total_planos(self):
-        # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries()
         oracle.connect()
-        # Retorna o total de registros computado pela query
         return oracle.sqlToDataFrame(self.qry_total_planos)["total_planos"].values[0]
 
     def get_updated_screen(self):

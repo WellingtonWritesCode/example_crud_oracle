@@ -2,6 +2,8 @@
 
 O projeto desenvovlido, consiste em um sistema de controle de sócios torcedores, sendo capaz de administrar a venda de plano para os sócios torcedores.
 
+![alt text](images/project-sample.jpeg)
+
 ## 👤 Integrantes:
 
 - [Cleverton dos Santos Liltk](github.com/1tsRetr0),
@@ -10,9 +12,21 @@ O projeto desenvovlido, consiste em um sistema de controle de sócios torcedores
 - [Lucio Ewald do Nascimento](github.com/lucioew28),
 - [Wellington da Silva Barbosa Junior](github.com/WellingtonWritesCode)
 
+## 🎬 Vídeo do projeto:
+
+- [Link para acesso:]();
+
 ## ⚡ Executando o projeto:
 
 O sistema exige que as tabelas existam, então basta executar o script Python a seguir para criação das tabelas e preenchimento de dados de exemplos:
+
+```shell
+~$ sudo apt-get install python3-tk
+```
+
+```shell
+~$ pip install -r requirements.txt
+```
 
 ```shell
 ~$ python create_tables_and_records.py

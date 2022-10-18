@@ -12,17 +12,14 @@ class Controller_Socios:
 
     def inserir_socio(self) -> Socios:
 
-        # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
 
-        # Solicita ao usuario o novo CPF
         cpf = le_cpf("CPF:")
         if cpf == None:
             return
 
         if self.verifica_existencia_socio(oracle, cpf):
-            # Solicita ao sócio o novo nome
             aux = dt.date.today().strftime("%d/%m/%Y")
             data_associacao = f"to_date('{aux}', 'dd/mm/yyyy')"
 
@@ -70,13 +67,12 @@ class Controller_Socios:
                         email = values['-EMAIL-']
 
             window.close()
-            # Insere e persiste o novo cliente
+
             oracle.write(
                 f"insert into socios values ('{cpf}', {id_plano}, '{nome}', '{endereco}', {data_associacao}, NULL, '{telefone}', '{email}')")
-            # Recupera os dados do novo cliente criado transformando em um DataFrame
+
             df_socio = oracle.sqlToDataFrame(
                 f"select cpf, id_plano, endereco, nome, data_associacao, data_desativacao, telefone, email from socios where cpf = '{cpf}'")
-            # Cria um novo objeto Cliente
             novo_socio = Socios(
                 df_socio.cpf.values[0],
                 df_socio.id_plano.values[0],
@@ -87,27 +83,21 @@ class Controller_Socios:
                 df_socio.telefone.values[0],
                 df_socio.email.values[0]
             )
-            # Exibe os atributos do novo cliente
             sg.PopupOK("O seguinte socio foi cadastrado", novo_socio.to_string())
-            # Retorna o objeto novo_cliente para utilização posterior, caso necessário
             return novo_socio
         else:
             sg.PopupOK("CPF ja cadastrado")
             return None
 
     def atualizar_socio(self) -> Socios:
-        # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
 
-        # Solicita ao usuário o código do cliente a ser alterado
         cpf = le_cpf("CPF do socio que deseja alterar:")
         if cpf == None:
             return
 
-        # Verifica se o cliente existe na base de dados
         if not self.verifica_existencia_socio(oracle, cpf):
-            # Solicita a nova descrição do cliente
             df_socio = oracle.sqlToDataFrame(
                 f"select cpf, id_plano, endereco, nome, data_associacao, data_desativacao, telefone, email from socios where cpf = '{cpf}'")
 
@@ -205,7 +195,6 @@ class Controller_Socios:
                         break
 
             window.close()
-            # Atualiza o nome do cliente existente
             update = (
                 f"update socios set nome = '{novo_nome}', "+
                 f"endereco = '{novo_endereco}', "+
@@ -219,10 +208,8 @@ class Controller_Socios:
                 oracle.write(
                     f"update socios set data_desativacao = to_date('{nova_data}', 'dd/mm/yyyy') where cpf = '{cpf}'"
                 )
-            # Recupera os dados do novo cliente criado transformando em um DataFrame
             df_socio_atualizado = oracle.sqlToDataFrame(
                 f"select cpf, id_plano, endereco, nome, data_associacao, data_desativacao, telefone, email from socios where cpf = '{cpf}'")
-            # Cria um novo objeto cliente
             socio_atualizado = Socios(
                 df_socio_atualizado.cpf.values[0],
                 df_socio_atualizado.id_plano.values[0],
@@ -233,22 +220,19 @@ class Controller_Socios:
                 df_socio_atualizado.telefone.values[0],
                 df_socio_atualizado.email.values[0]
             )
-            # Exibe os atributos do novo cliente
             sg.PopupOK("Socio atualizado:", socio_atualizado.to_string())
-            # Retorna o objeto cliente_atualizado para utilização posterior, caso necessário
             return socio_atualizado
         else:
             sg.PopupOK(f"O CPF {cpf} não existe.")
             return None
 
     def excluir_socio(self):
-        # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
-        
+
         # Recupera os dados do novo cliente criado transformando em um DataFrame
         df_socio = oracle.sqlToDataFrame("select cpf, nome from socios")
-        
+
         socios = [f"{capitalize_name(nome)}|{df_socio.cpf.values[i]}" for i, nome in enumerate(df_socio.nome.values)]
 
         layout = [[sg.Combo(socios, k='-SOCIOS-', default_value=socios[0], readonly=True), sg.B("Excluir", k='-EXCLUIR-'), sg.B("Cancelar", k='-CANCELAR-')]]
@@ -270,7 +254,6 @@ class Controller_Socios:
         window.close()
 
     def verifica_existencia_socio(self, oracle: OracleQueries, cpf: str = None) -> bool:
-        # Recupera os dados do novo cliente criado transformando em um DataFrame
         df_socio = oracle.sqlToDataFrame(
             f"select cpf, nome from socios where cpf = '{cpf}'")
         return df_socio.empty
