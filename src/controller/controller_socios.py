@@ -67,6 +67,7 @@ class Controller_Socios:
                         sg.PopupOK("Email invalido!")
                     else:
                         email = values['-EMAIL-']
+                        break
 
             window.close()
 
