@@ -115,20 +115,30 @@ class Controller_Planos:
         oracle = OracleQueries(can_write=True)
         oracle.connect()
 
-        id_plano = id_plano = le_int("ID do plano que deseja excluir:")
+        df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
+        planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
+        layout = [
+            [
+                sg.Combo(planos, planos[0], readonly=True, k='-PLANOS-'),
+                sg.B("Excluir", k='-EXCLUIR-'),
+                sg.B("Cancelar", k='-CANCELAR-')
+            ]
+        ]
 
-        if not self.verifica_existencia_plano(oracle, id_plano):
-            df_plano = oracle.sqlToDataFrame(
-                f"select id_plano, nome, valor from planos where id_plano = {id_plano}")
-            oracle.write(f"delete from planos where id_plano = {id_plano}")
-            plano_excluido = Planos(
-                df_plano.id_plano.values[0],
-                df_plano.nome.values[0],
-                df_plano.valor.values[0]
-            )
-            sg.PopupOK("Plano excluido com sucesso!", "Plano excluido:", plano_excluido.to_string())
-        else:
-            sg.PopupOK(f"O plano de ID {id_plano} não existe.")
+        window = sg.Window("Excluir Plano", layout)
+
+        while True:
+            event, values = window.read()
+            if event in (sg.WINDOW_CLOSED, '-CANCELAR-'):
+                break
+            elif event == '-EXCLUIR-':
+                delete_id = values['-PLANOS-'].split("|")[0]
+                oracle.write(f"delete from socios where id_plano = {delete_id}")
+                oracle.write(f"delete from planos where id_plano = {delete_id}")
+                df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
+                planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
+                window['-PLANOS-'].update(values=planos, value=planos[0])
+        window.close()
 
     def verifica_existencia_plano(self, oracle: OracleQueries, id_plano:int = None) -> bool:
         df_plano = oracle.sqlToDataFrame(
