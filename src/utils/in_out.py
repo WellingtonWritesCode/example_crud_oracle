@@ -30,6 +30,7 @@ def le_cpf(texto: str = ""):
         event, values = window.read()
 
         if event in (sg.WINDOW_CLOSED, '-CANCEL-'):
+            window.close()
             return None
         elif event == '-OK-':
             cpf = values['-IN-']
