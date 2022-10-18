@@ -59,7 +59,7 @@ class Controller_Socios:
                     endereco = values['-ENDERECO-']
                     telefone = values['-TELEFONE-']
 
-                    if not re.match("[a-zA-Z0-9]+@[[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
+                    if not re.match("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
                         valid_email = False
                         error += "Email invalido!\n"
                     else:
@@ -270,7 +270,7 @@ class Controller_Socios:
                 df_socio = oracle.sqlToDataFrame(
                      f"select cpf, nome from socios")
                 socios = [f"{capitalize_name(nome)}|{df_socio.cpf.values[i]}" for i, nome in enumerate(df_socio.nome.values)]
-                window['-SOCIOS-'].update(values=socios, default_value=socios[0])
+                window['-SOCIOS-'].update(values=socios, value=socios[0])
 
         window.close()
 
