@@ -30,7 +30,7 @@ class Controller_Planos:
             elif event == '-OK-':
                 try:
                     nome = values['-NOME-']
-                    valor = values['-VALOR-']
+                    valor = int(values['-VALOR-'])
                     valido = True
                 except ValueError:
                     sg.PopupOK("Valor invalido!")
