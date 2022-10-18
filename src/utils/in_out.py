@@ -15,10 +15,10 @@ def le_cpf(texto: str = ""):
             return None
         elif event == '-OK-':
             cpf = values['-IN-']
-            if re.match("[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}", cpf):
+            if re.fullmatch("[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}", cpf):
                 window.close()
                 return cpf
-            elif re.match("[0-9]{11}", cpf):
+            elif re.fullmatch("[0-9]{11}", cpf):
                 window.close()
                 return f"{cpf[0:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
             else:

@@ -63,7 +63,7 @@ class Controller_Socios:
                     telefone = values['-TELEFONE-']
                     id_plano = int(values['-ID-'].split("|")[0])
 
-                    if not re.match("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
+                    if not re.fullmatch("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
                         sg.PopupOK("Email invalido!")
                     else:
                         email = values['-EMAIL-']
@@ -156,7 +156,7 @@ class Controller_Socios:
                 break
             if event == '-OK-':
                 novo_id_plano = int(values['-ID-'].split("|")[0])
-                if re.match("[0-9]{2}/[0-9]{2}/[0-9]{4}", values['-DATA-']):
+                if re.fullmatch("[0-9]{2}/[0-9]{2}/[0-9]{4}", values['-DATA-']):
                     try:
                         data_arr = values['-DATA-'].split("/")
                         nova_data = dt.datetime(int(data_arr[2]), int(data_arr[1]), int(data_arr[0])).strftime("%d/%m/%Y")
@@ -183,7 +183,7 @@ class Controller_Socios:
                     novo_telefone = df_socio.telefone.values[0]
 
                 if values['-EMAIL-'] != "":
-                    if not re.match("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
+                    if not re.fullmatch("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
                         valid_email = False
                         error += "Email Invalido!\n"
                     else:
