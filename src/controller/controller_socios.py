@@ -4,6 +4,7 @@ import PySimpleGUI as sg
 import re
 import datetime as dt
 from utils.in_out import le_cpf
+from utils.general_utils import capitalize_name
 
 class Controller_Socios:
     def __init__(self):
@@ -234,25 +235,28 @@ class Controller_Socios:
         oracle = OracleQueries(can_write=True)
         oracle.connect()
 
-        cpf = le_cpf("CPF do socio que deseja remover:")
+        # Recupera os dados do novo cliente criado transformando em um DataFrame
+        df_socio = oracle.sqlToDataFrame("select cpf, nome from socios")
 
-        if not self.verifica_existencia_socio(oracle, cpf):
-            df_socio = oracle.sqlToDataFrame(
-                f"select cpf, id_plano, endereco, nome, data_associacao, data_desativacao, telefone, email from socios where cpf = '{cpf}'")
-            oracle.write(f"delete from socios where cpf = '{cpf}'")
-            socio_excluido = Socios(
-                df_socio.cpf.values[0],
-                df_socio.id_plano.values[0],
-                df_socio.endereco.values[0],
-                df_socio.nome.values[0],
-                df_socio.data_associacao.values[0],
-                df_socio.data_desativacao.values[0],
-                df_socio.telefone.values[0],
-                df_socio.email.values[0]
-            )
-            sg.PopupOK("Socio Removido com Sucesso!", socio_excluido.to_string())
-        else:
-            sg.PopupOK(f"O CPF {cpf} não existe.")
+        socios = [f"{capitalize_name(nome)}|{df_socio.cpf.values[i]}" for i, nome in enumerate(df_socio.nome.values)]
+
+        layout = [[sg.Combo(socios, k='-SOCIOS-', default_value=socios[0], readonly=True), sg.B("Excluir", k='-EXCLUIR-'), sg.B("Cancelar", k='-CANCELAR-')]]
+        window = sg.Window("Excluir Socio", layout)
+
+        while True:
+            event, values = window.read()
+            if event in (sg.WINDOW_CLOSED, '-CANCELAR-'):
+                break
+            elif event == '-EXCLUIR-':
+                print(values['-SOCIOS-'])
+                delete_cpf = values['-SOCIOS-'].split("|")[1]
+                oracle.write(f"delete from socios where cpf = '{delete_cpf}'")
+                df_socio = oracle.sqlToDataFrame(
+                     f"select cpf, nome from socios")
+                socios = [f"{capitalize_name(nome)}|{df_socio.cpf.values[i]}" for i, nome in enumerate(df_socio.nome.values)]
+                window['-SOCIOS-'].update(values=socios, default_value=socios[0])
+
+        window.close()
 
     def verifica_existencia_socio(self, oracle: OracleQueries, cpf: str = None) -> bool:
         df_socio = oracle.sqlToDataFrame(

@@ -2,6 +2,8 @@
 
 O projeto desenvovlido, consiste em um sistema de controle de sócios torcedores, sendo capaz de administrar a venda de plano para os sócios torcedores.
 
+![alt text](images/project-sample.jpeg)
+
 ## 👤 Integrantes:
 
 - [Cleverton dos Santos Liltk](github.com/1tsRetr0),
