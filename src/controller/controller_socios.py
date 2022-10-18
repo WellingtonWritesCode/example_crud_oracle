@@ -40,7 +40,7 @@ class Controller_Socios:
                 [sg.Input(s=(30, 1), k='-TELEFONE-')],
                 [sg.Input(s=(30, 1), k='-EMAIL-')],
                 [sg.Col([[sg.Combo(planos, planos[0], k='-ID-', readonly=True)]], pad=(0, 0), vertical_alignment="top"),
-                sg.Col([[sg.B("OK", k='-OK-')]], element_justification="right", expand_x=True, pad=(0, 0))]
+                sg.Col([[sg.B("Cancelar", k='-CANCELAR-'), sg.B("OK", k='-OK-')]], element_justification="right", expand_x=True, pad=(0, 0))]
             ]
 
             layout = [
@@ -49,11 +49,13 @@ class Controller_Socios:
 
             window = sg.Window("Inserir Socio", layout)
 
+            email = ""
+
             while True:
 
                 event, values = window.read()
 
-                if event == sg.WINDOW_CLOSED:
+                if event in (sg.WINDOW_CLOSED, '-CANCELAR-'):
                     break
                 elif event == '-OK-':
                     nome = values['-NOME-']
@@ -67,6 +69,9 @@ class Controller_Socios:
                         email = values['-EMAIL-']
 
             window.close()
+
+            if email == "":
+                return
 
             oracle.write(
                 f"insert into socios values ('{cpf}', {id_plano}, '{nome}', '{endereco}', {data_associacao}, NULL, '{telefone}', '{email}')")
@@ -118,11 +123,14 @@ class Controller_Socios:
             layout_IDl = [
                 [sg.T("Id Plano:")]
             ]
-
+            df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
+            default_id = oracle.sqlToDataFrame(f"select id_plano from socios where cpf = '{cpf}'").id_plano.values[0]
+            default_nome = oracle.sqlToDataFrame(f"select nome from planos where id_plano = {default_id}").nome.values[0]
+            planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
             layout_IDr = [
                 [
-                    sg.Col([[sg.Input(s=(5, 1), k='-ID-')]], pad=(0, 0), vertical_alignment="top"),
-                    sg.Col([[sg.B("OK", k='-OK-')]], element_justification="right", expand_x=True, pad=(0, 0))
+                    sg.Col([[sg.Combo(planos, f"{default_id}|{default_nome}", k='-ID-', readonly=True)]], pad=(0, 0), vertical_alignment="top"),
+                    sg.Col([[sg.B("Cancelar", k='-CANCELAR-'), sg.B("OK", k='-OK-')]], element_justification="right", expand_x=True, pad=(0, 0))
                 ]
             ]
 
@@ -134,15 +142,17 @@ class Controller_Socios:
             ]
 
             window = sg.Window("Atualizar Socio", layout)
+            valid_date = False
 
             while True:
                 error = ""
 
                 event, values = window.read()
 
-                if event == sg.WINDOW_CLOSED:
+                if event in (sg.WINDOW_CLOSED, '-CANCELAR-'):
                     break
                 if event == '-OK-':
+                    novo_id_plano = int(values['-ID-'].split("|")[0])
                     if re.match("[0-9]{2}/[0-9]{2}/[0-9]{4}", values['-DATA-']):
                         try:
                             data_arr = values['-DATA-'].split("/")
@@ -180,21 +190,15 @@ class Controller_Socios:
                         novo_email = df_socio.email.values[0]
                         valid_email = True
 
-                    try:
-                        if values['-ID-'] != "":
-                            novo_id_plano = int(values['-ID-'])
-                        else:
-                            novo_id_plano = df_socio.id_plano.values[0]
-                        valid_int = True
-                    except ValueError:
-                        valid_int = False
-                        error += "ID Invalido!\n"
-                    if not valid_email or not valid_int or not valid_date:
+                    if not valid_email or not valid_date:
                         sg.PopupOK(error[:-1])
                     else:
                         break
 
             window.close()
+            if not valid_date:
+                return
+
             update = (
                 f"update socios set nome = '{novo_nome}', "+
                 f"endereco = '{novo_endereco}', "+
@@ -243,7 +247,6 @@ class Controller_Socios:
             if event in (sg.WINDOW_CLOSED, '-CANCELAR-'):
                 break
             elif event == '-EXCLUIR-':
-                print(values['-SOCIOS-'])
                 delete_cpf = values['-SOCIOS-'].split("|")[1]
                 oracle.write(f"delete from socios where cpf = '{delete_cpf}'")
                 df_socio = oracle.sqlToDataFrame(
