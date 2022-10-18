@@ -60,14 +60,17 @@ class Controller_Socios:
                 elif event == '-OK-':
                     nome = values['-NOME-']
                     endereco = values['-ENDERECO-']
-                    telefone = values['-TELEFONE-']
                     id_plano = int(values['-ID-'].split("|")[0])
 
-                    if not re.fullmatch("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
-                        sg.PopupOK("Email invalido!")
+                    if not re.fullmatch("[0-9]{11}", values['-TELEFONE-']):
+                        sg.PopupOK("Telefone invalido!")
                     else:
-                        email = values['-EMAIL-']
-                        break
+                        telefone = values['-TELEFONE-']
+                        if not re.fullmatch("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
+                            sg.PopupOK("Email invalido!")
+                        else:
+                            email = values['-EMAIL-']
+                            break
 
             window.close()
 
@@ -177,8 +180,13 @@ class Controller_Socios:
                     novo_endereco = values['-ENDERECO-']
                 else:
                     novo_endereco = df_socio.endereco.values[0]
+                valid_phone = True
                 if values['-TELEFONE-'] != "":
-                    novo_telefone = values['-TELEFONE-']
+                    if not re.fullmatch("[0-9]{11}", values['-TELEFONE-']):
+                        error += ("Telefone invalido!\n")
+                        valid_phone = False
+                    else:
+                        novo_telefone = values['-TELEFONE-']
                 else:
                     novo_telefone = df_socio.telefone.values[0]
 
@@ -193,7 +201,7 @@ class Controller_Socios:
                     novo_email = df_socio.email.values[0]
                     valid_email = True
 
-                if not valid_email or not valid_date:
+                if not valid_email or not valid_date or not valid_phone:
                     sg.PopupOK(error[:-1])
                 else:
                     break
