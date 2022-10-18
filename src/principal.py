@@ -241,7 +241,7 @@ def run():
         [sg.TabGroup(tab_group, tab_background_color="#64778d", expand_y=True)],
         [sg.Col([[sg.B("    Sair    ", k='-SAIR-')]], element_justification="right", expand_x=True, pad=(0,0))]
     ]
-    window = sg.Window("Sócios Torcedores - SC/BR, layout)
+    window = sg.Window("Sócios Torcedores - SC/BR", layout)
 
     while True:
         event, values = window.read()
