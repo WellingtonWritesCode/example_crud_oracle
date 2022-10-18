@@ -18,11 +18,16 @@ class Controller_Socios:
 
         # Solicita ao usuario o novo CPF
         cpf = le_cpf("CPF:")
+        if cpf == None:
+            return
 
         if self.verifica_existencia_socio(oracle, cpf):
             # Solicita ao sócio o novo nome
             aux = dt.date.today().strftime("%d/%m/%Y")
             data_associacao = f"to_date('{aux}', 'dd/mm/yyyy')"
+
+            df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
+            planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
 
             layout_l = [
                 [sg.T("Nome:")],
@@ -37,7 +42,7 @@ class Controller_Socios:
                 [sg.Input(s=(30, 1), k='-ENDERECO-')],
                 [sg.Input(s=(30, 1), k='-TELEFONE-')],
                 [sg.Input(s=(30, 1), k='-EMAIL-')],
-                [sg.Col([[sg.Input(s=(5, 1), k='-ID-')]], pad=(0, 0), vertical_alignment="top"),
+                [sg.Col([[sg.Combo(planos, planos[0], k='-ID-', readonly=True)]], pad=(0, 0), vertical_alignment="top"),
                 sg.Col([[sg.B("OK", k='-OK-')]], element_justification="right", expand_x=True, pad=(0, 0))]
             ]
 
@@ -48,33 +53,21 @@ class Controller_Socios:
             window = sg.Window("Inserir Socio", layout)
 
             while True:
-                error = ""
 
                 event, values = window.read()
 
                 if event == sg.WINDOW_CLOSED:
                     break
-                if event == '-OK-':
+                elif event == '-OK-':
                     nome = values['-NOME-']
                     endereco = values['-ENDERECO-']
                     telefone = values['-TELEFONE-']
+                    id_plano = int(values['-ID-'].split("|")[0])
 
                     if not re.match("[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]+", values['-EMAIL-']):
-                        valid_email = False
-                        error += "Email invalido!\n"
+                        sg.PopupOK("Email invalido!")
                     else:
-                        valid_email = True
                         email = values['-EMAIL-']
-                    try:
-                        id_plano = int(values['-ID-'])
-                        valid_int = True
-                    except ValueError:
-                        valid_int = False
-                        error += "ID Invalido!\n"
-                    if not valid_email or not valid_int:
-                        sg.PopupOK(error[:-1])
-                    else:
-                        break
 
             window.close()
             # Insere e persiste o novo cliente
@@ -109,6 +102,8 @@ class Controller_Socios:
 
         # Solicita ao usuário o código do cliente a ser alterado
         cpf = le_cpf("CPF do socio que deseja alterar:")
+        if cpf == None:
+            return
 
         # Verifica se o cliente existe na base de dados
         if not self.verifica_existencia_socio(oracle, cpf):
