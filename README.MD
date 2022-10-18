@@ -21,6 +21,14 @@ O projeto desenvovlido, consiste em um sistema de controle de sócios torcedores
 O sistema exige que as tabelas existam, então basta executar o script Python a seguir para criação das tabelas e preenchimento de dados de exemplos:
 
 ```shell
+~$ sudo apt-get installl python3-tk
+```
+
+```shell
+pip install -r requirements.txt
+```
+
+```shell
 ~$ python create_tables_and_records.py
 ```
 
