@@ -1,6 +1,6 @@
 from model.planos import Planos
 from conexion.oracle_queries import OracleQueries
-from utils.in_out import le_int
+from utils.general_utils import capitalize_name
 import PySimpleGUI as sg
 
 class Controller_Planos:
@@ -56,7 +56,7 @@ class Controller_Planos:
         oracle.connect()
 
         df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
-        planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
+        planos = [f"{id}|{capitalize_name(df_planos.nome.values[i])}" for i, id in enumerate(df_planos.id_plano.values)]
         layout = [
             [sg.Combo(planos, planos[0], readonly=True, k='-PLANOS-'), sg.B("OK")]
         ]
@@ -119,7 +119,7 @@ class Controller_Planos:
         oracle.connect()
 
         df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
-        planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
+        planos = [f"{id}|{capitalize_name(df_planos.nome.values[i])}" for i, id in enumerate(df_planos.id_plano.values)]
         layout = [
             [
                 sg.Combo(planos, planos[0], readonly=True, k='-PLANOS-'),
@@ -139,7 +139,7 @@ class Controller_Planos:
                 oracle.write(f"delete from socios where id_plano = {delete_id}")
                 oracle.write(f"delete from planos where id_plano = {delete_id}")
                 df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
-                planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
+                planos = [f"{id}|{capitalize_name(df_planos.nome.values[i])}" for i, id in enumerate(df_planos.id_plano.values)]
                 window['-PLANOS-'].update(values=planos, value=planos[0])
         window.close()
 
