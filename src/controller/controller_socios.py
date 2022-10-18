@@ -24,7 +24,7 @@ class Controller_Socios:
             data_associacao = f"to_date('{aux}', 'dd/mm/yyyy')"
 
             df_planos = oracle.sqlToDataFrame("select id_plano, nome from planos")
-            planos = [f"{id}|{df_planos.nome.values[i]}" for i, id in enumerate(df_planos.id_plano.values)]
+            planos = [f"{id}|{capitalize_name(df_planos.nome.values[i])}" for i, id in enumerate(df_planos.id_plano.values)]
 
             layout_l = [
                 [sg.T("Nome:")],
