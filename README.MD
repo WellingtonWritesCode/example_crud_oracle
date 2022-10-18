@@ -25,7 +25,7 @@ O sistema exige que as tabelas existam, então basta executar o script Python a 
 ```
 
 ```shell
-pip install -r requirements.txt
+~$ pip install -r requirements.txt
 ```
 
 ```shell
